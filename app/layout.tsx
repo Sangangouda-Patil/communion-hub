@@ -1,6 +1,7 @@
 import type React from "react"
 import "./globals.css"
 import ZapierChat from '@/components/ZapierChat'
+import { ModalProvider } from '@/components/shared/ModalContext'
 
 export default function RootLayout({
   children,
@@ -9,8 +10,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
-      <ZapierChat />
+      <body>
+        <ModalProvider>
+          {children}
+        </ModalProvider>
+        <ZapierChat />
+      </body>
     </html>
   )
 }

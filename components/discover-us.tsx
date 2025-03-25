@@ -3,8 +3,11 @@ import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
 import { Check } from "lucide-react"
+import { useModal } from './shared/ModalContext'
 
 export default function DiscoverUs({ isLoaded = false }) {
+  const { openSignup } = useModal()
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -94,12 +97,14 @@ export default function DiscoverUs({ isLoaded = false }) {
                   <FeatureItem text="Networking Opportunities" />
                 </div>
 
-                {/* CTA Button */}
+                {/* CTA Button - Updated with link to signup */}
                 <Link
-                  href="/get-started"
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    openSignup()
+                  }}
                   className="inline-block bg-[#4EB89D] hover:bg-[#3da78c] text-white font-medium px-5 sm:px-6 md:px-8 py-2 sm:py-3 rounded-full transition-colors text-sm sm:text-base w-full sm:w-auto text-center"
-                  scroll={true}
-                  onClick={() => window.scrollTo(0, 0)}
                 >
                   Get Started Now
                 </Link>
