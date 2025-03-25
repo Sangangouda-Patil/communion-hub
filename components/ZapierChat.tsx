@@ -219,13 +219,14 @@ export default function ZapierChat() {
       chatbotElement.setAttribute('chatbot-id', 'cm8ndpwuc0008ahfwntv221wb')
       
       if (dimensions.isMobile) {
-        (chatbotElement.style as CSSStyleDeclaration).width = '100%'
-        (chatbotElement.style as CSSStyleDeclaration).height = '100%'
-        (chatbotElement.style as CSSStyleDeclaration).position = 'fixed'
-        (chatbotElement.style as CSSStyleDeclaration).top = '0'
-        (chatbotElement.style as CSSStyleDeclaration).left = '0'
-        (chatbotElement.style as CSSStyleDeclaration).overflowY = 'auto'
-        (chatbotElement.style as any).webkitOverflowScrolling = 'touch'
+        const style = chatbotElement.style as any;
+        style.width = '100%';
+        style.height = '100%';
+        style.position = 'fixed';
+        style.top = '0';
+        style.left = '0';
+        style.overflowY = 'auto';
+        style.webkitOverflowScrolling = 'touch';
       }
       
       chatbotElement.setAttribute('primary-color', '#42b292')
