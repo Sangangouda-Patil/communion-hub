@@ -225,7 +225,7 @@ export default function ZapierChat() {
         chatbotElement.style.top = '0'
         chatbotElement.style.left = '0'
         chatbotElement.style.overflowY = 'auto'
-        chatbotElement.style.WebkitOverflowScrolling = 'touch'
+        (chatbotElement.style as any).webkitOverflowScrolling = 'touch'
       }
       
       chatbotElement.setAttribute('primary-color', '#42b292')
