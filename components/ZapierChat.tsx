@@ -219,12 +219,12 @@ export default function ZapierChat() {
       chatbotElement.setAttribute('chatbot-id', 'cm8ndpwuc0008ahfwntv221wb')
       
       if (dimensions.isMobile) {
-        chatbotElement.style.width = '100%'
-        chatbotElement.style.height = '100%'
-        chatbotElement.style.position = 'fixed'
-        chatbotElement.style.top = '0'
-        chatbotElement.style.left = '0'
-        chatbotElement.style.overflowY = 'auto'
+        (chatbotElement.style as CSSStyleDeclaration).width = '100%'
+        (chatbotElement.style as CSSStyleDeclaration).height = '100%'
+        (chatbotElement.style as CSSStyleDeclaration).position = 'fixed'
+        (chatbotElement.style as CSSStyleDeclaration).top = '0'
+        (chatbotElement.style as CSSStyleDeclaration).left = '0'
+        (chatbotElement.style as CSSStyleDeclaration).overflowY = 'auto'
         (chatbotElement.style as any).webkitOverflowScrolling = 'touch'
       }
       
