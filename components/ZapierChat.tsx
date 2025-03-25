@@ -1,30 +1,28 @@
 "use client"
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import styles from './ZapierChat.module.css'
 
 export default function ZapierChat() {
   const [isVisible, setIsVisible] = useState(false)
-  const [dimensions, setDimensions] = useState(() => {
-    // Default dimensions for SSR
-    return {
-      chatWidth: '400px',
-      chatHeight: '600px',
-      chatRight: '20px',
-      chatBottom: '20px',
-      buttonSize: '50px',
-      buttonRight: '20px',
-      buttonBottom: '20px',
-      isMobile: false
-    }
-  })
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false)
+  const [dimensions, setDimensions] = useState(() => ({
+    chatWidth: '400px',
+    chatHeight: '600px',
+    chatRight: '20px',
+    chatBottom: '20px',
+    buttonSize: '50px',
+    buttonRight: '20px',
+    buttonBottom: '20px',
+    isMobile: false
+  }))
   
   // Update dimensions based on window size
-  const updateDimensions = () => {
+  const updateDimensions = useCallback(() => {
     const width = window.innerWidth
     if (width < 480) { // Mobile
       setDimensions({
-        chatWidth: '100%', // Use % instead of vw
-        chatHeight: '100%', // Use % instead of vh
+        chatWidth: '100%',
+        chatHeight: '100%',
         chatRight: '0',
         chatBottom: '0',
         buttonSize: '40px',
@@ -55,16 +53,45 @@ export default function ZapierChat() {
         isMobile: false
       })
     }
-  }
+  }, [])
+
+  // Load Zapier script only once when component mounts
+  useEffect(() => {
+    if (!isScriptLoaded) {
+      const script = document.createElement('script')
+      script.src = 'https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'
+      script.async = true
+      script.type = 'module'
+      script.onload = () => setIsScriptLoaded(true)
+      document.head.appendChild(script)
+
+      return () => {
+        if (document.head.contains(script)) {
+          document.head.removeChild(script)
+        }
+      }
+    }
+  }, [])
 
   // Initialize dimensions on mount and handle resize
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      updateDimensions() // Set initial dimensions
+      updateDimensions()
       window.addEventListener('resize', updateDimensions)
-      return () => window.removeEventListener('resize', updateDimensions)
+      
+      // Prevent viewport changes from closing the chat on mobile
+      if (dimensions.isMobile) {
+        const meta = document.createElement('meta')
+        meta.name = 'viewport'
+        meta.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'
+        document.head.appendChild(meta)
+      }
+      
+      return () => {
+        window.removeEventListener('resize', updateDimensions)
+      }
     }
-  }, [])
+  }, [updateDimensions, dimensions.isMobile])
 
   useEffect(() => {
     // Create chat icon button when chat is hidden
@@ -103,22 +130,16 @@ export default function ZapierChat() {
       }
     }
 
-    // Load chat widget when visible
-    if (isVisible) {
-      const script = document.createElement('script')
-      script.src = 'https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'
-      script.async = true
-      script.type = 'module'
-      document.head.appendChild(script)
-      
+    // Create chat container when visible
+    if (isVisible && isScriptLoaded) {
       const chatContainer = document.createElement('div')
       chatContainer.id = 'zapier-chat-container'
       chatContainer.style.position = 'fixed'
       chatContainer.style.zIndex = '9999'
       chatContainer.style.transition = 'all 0.3s ease'
       
-      // Mobile-specific styles
       if (dimensions.isMobile) {
+        chatContainer.style.position = 'fixed'
         chatContainer.style.top = '0'
         chatContainer.style.left = '0'
         chatContainer.style.right = '0'
@@ -127,26 +148,25 @@ export default function ZapierChat() {
         chatContainer.style.height = '100%'
         chatContainer.style.margin = '0'
         chatContainer.style.padding = '0'
+        // Prevent scrolling of background content
+        document.body.style.overflow = 'hidden'
       } else {
         chatContainer.style.right = dimensions.chatRight
         chatContainer.style.bottom = dimensions.chatBottom
-        chatContainer.style.width = 'auto'
-        chatContainer.style.height = 'auto'
+        chatContainer.style.width = dimensions.chatWidth
+        chatContainer.style.height = dimensions.chatHeight
       }
       
       const chatbotElement = document.createElement('zapier-interfaces-chatbot-embed')
       chatbotElement.setAttribute('is-popup', 'false')
       chatbotElement.setAttribute('chatbot-id', 'cm8ndpwuc0008ahfwntv221wb')
       
-      // Set different attributes for mobile
       if (dimensions.isMobile) {
         chatbotElement.style.width = '100%'
         chatbotElement.style.height = '100%'
-        chatbotElement.setAttribute('height', '100%')
-        chatbotElement.setAttribute('width', '100%')
-      } else {
-        chatbotElement.setAttribute('height', dimensions.chatHeight)
-        chatbotElement.setAttribute('width', dimensions.chatWidth)
+        chatbotElement.style.position = 'fixed'
+        chatbotElement.style.top = '0'
+        chatbotElement.style.left = '0'
       }
       
       chatbotElement.setAttribute('primary-color', '#42b292')
@@ -191,22 +211,25 @@ export default function ZapierChat() {
         closeButton.style.color = '#666666'
       }
       
-      closeButton.onclick = () => setIsVisible(false)
+      closeButton.onclick = () => {
+        setIsVisible(false)
+        // Restore scrolling when chat is closed
+        document.body.style.overflow = ''
+      }
       
       chatContainer.appendChild(chatbotElement)
       chatContainer.appendChild(closeButton)
       document.body.appendChild(chatContainer)
 
       return () => {
-        if (document.head.contains(script)) {
-          document.head.removeChild(script)
-        }
         if (document.body.contains(chatContainer)) {
           document.body.removeChild(chatContainer)
+          // Restore scrolling when component unmounts
+          document.body.style.overflow = ''
         }
       }
     }
-  }, [isVisible, dimensions])
+  }, [isVisible, dimensions, isScriptLoaded])
 
   return null
 } 
