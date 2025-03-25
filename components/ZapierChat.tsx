@@ -193,45 +193,29 @@ export default function ZapierChat() {
       const chatContainer = document.createElement('div')
       chatContainer.id = 'zapier-chat-container'
       chatContainer.style.position = 'fixed'
+      chatContainer.style.right = dimensions.chatRight
+      chatContainer.style.bottom = dimensions.chatBottom
+      chatContainer.style.width = dimensions.chatWidth
+      chatContainer.style.height = dimensions.chatHeight
       chatContainer.style.zIndex = '9999'
       chatContainer.style.transition = 'all 0.3s ease'
-      
-      if (dimensions.isMobile) {
-        chatContainer.style.position = 'fixed'
-        chatContainer.style.top = '0'
-        chatContainer.style.left = '0'
-        chatContainer.style.right = '0'
-        chatContainer.style.bottom = '0'
-        chatContainer.style.width = '100%'
-        chatContainer.style.height = '100%'
-        chatContainer.style.margin = '0'
-        chatContainer.style.padding = '0'
-        chatContainer.style.overflowY = 'hidden'
-      } else {
-        chatContainer.style.right = dimensions.chatRight
-        chatContainer.style.bottom = dimensions.chatBottom
-        chatContainer.style.width = dimensions.chatWidth
-        chatContainer.style.height = dimensions.chatHeight
-      }
+      chatContainer.style.backgroundColor = '#ffffff'
+      chatContainer.style.borderRadius = '12px'
+      chatContainer.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)'
+      chatContainer.style.overflow = 'hidden'
       
       const chatbotElement = document.createElement('zapier-interfaces-chatbot-embed')
       chatbotElement.setAttribute('is-popup', 'false')
       chatbotElement.setAttribute('chatbot-id', 'cm8ndpwuc0008ahfwntv221wb')
-      
-      if (dimensions.isMobile) {
-        const style = chatbotElement.style as any;
-        style.width = '100%';
-        style.height = '100%';
-        style.position = 'fixed';
-        style.top = '0';
-        style.left = '0';
-        style.overflowY = 'auto';
-        style.webkitOverflowScrolling = 'touch';
-      }
-      
       chatbotElement.setAttribute('primary-color', '#42b292')
       chatbotElement.setAttribute('text-color', '#1f2937')
       chatbotElement.setAttribute('background-color', '#ffffff')
+      
+      // Add styles to make chatbot fill container
+      chatbotElement.style.width = '100%'
+      chatbotElement.style.height = '100%'
+      chatbotElement.style.display = 'block'
+      chatbotElement.style.border = 'none'
       
       const closeButton = document.createElement('button')
       closeButton.innerHTML = '✕'
